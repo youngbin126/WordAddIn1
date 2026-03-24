@@ -29,67 +29,93 @@ namespace WordAddIn1
 
             string author = activeDoc.BuiltInDocumentProperties["Author"].Value?.ToString() ?? "Unknown";
             string revisedAuthor = PromptForRevisedAuthor(author);
+            string tempDirectory = Path.Combine(Path.GetTempPath(), $"WordAddIn1_TableCompare_{Guid.NewGuid():N}");
+            Directory.CreateDirectory(tempDirectory);
 
-            for (int i = 1; i <= table.Rows.Count; i++)
+            try
             {
-                Cell leftCell = table.Cell(i, 1);
-                Cell rightCell = table.Cell(i, 2);
-
-                string leftText = TrimCellText(leftCell.Range.Text);
-                string rightText = TrimCellText(rightCell.Range.Text);
-
-                string leftPath = @"C:\1.docx";
-                string rightPath = @"C:\2.docx";
-                string rePath = @"C:\3.docx";
-
-                SaveTempDoc(leftText, leftPath);
-                SaveTempDoc(rightText, rightPath);
-
-                Document leftDoc = wordApp.Documents.Open(leftPath, ReadOnly: false, Visible: false);
-                Document rightDoc = wordApp.Documents.Open(rightPath, ReadOnly: false, Visible: false);
-
-                Document compareDoc = wordApp.CompareDocuments(
-                    OriginalDocument: leftDoc,
-                    RevisedDocument: rightDoc,
-                    Destination: WdCompareDestination.wdCompareDestinationNew,
-                    Granularity: WdGranularity.wdGranularityWordLevel,
-                    CompareFormatting: true,
-                    CompareCaseChanges: true,
-                    CompareWhitespace: true,
-                    CompareTables: true,
-                    CompareHeaders: true,
-                    CompareFootnotes: true,
-                    CompareTextboxes: true,
-                    CompareFields: true,
-                    CompareComments: true,
-                    CompareMoves: true,
-                    RevisedAuthor: revisedAuthor,
-                    IgnoreAllComparisonWarnings: false
-                );
-
-                compareDoc.Activate();
-                compareDoc.Content.Copy();
-                compareDoc.SaveAs2(rePath, WdSaveFormat.wdFormatXMLDocument);
-                compareDoc.Close(WdSaveOptions.wdSaveChanges);
-                Marshal.ReleaseComObject(compareDoc);
-
-                rightCell.Range.Paste();
-
-                leftDoc.Close(WdSaveOptions.wdDoNotSaveChanges);
-                rightDoc.Close(WdSaveOptions.wdDoNotSaveChanges);
-                Marshal.ReleaseComObject(leftDoc);
-                Marshal.ReleaseComObject(rightDoc);
-
-                try
+                for (int i = 1; i <= table.Rows.Count; i++)
                 {
-                    File.Delete(leftPath);
-                    File.Delete(rightPath);
-                    File.Delete(rePath);
+                    if (table.Rows[i].Cells.Count < 2)
+                    {
+                        continue;
+                    }
+
+                    Cell leftCell = table.Cell(i, 1);
+                    Cell rightCell = table.Cell(i, 2);
+
+                    string leftText = TrimCellText(leftCell.Range.Text);
+                    string rightText = TrimCellText(rightCell.Range.Text);
+
+                    string leftPath = Path.Combine(tempDirectory, $"left_{i}.docx");
+                    string rightPath = Path.Combine(tempDirectory, $"right_{i}.docx");
+                    string rePath = Path.Combine(tempDirectory, $"compare_{i}.docx");
+
+                    SaveTempDoc(leftText, leftPath);
+                    SaveTempDoc(rightText, rightPath);
+
+                    Document leftDoc = null;
+                    Document rightDoc = null;
+                    Document compareDoc = null;
+
+                    try
+                    {
+                        leftDoc = wordApp.Documents.Open(leftPath, ReadOnly: false, Visible: false);
+                        rightDoc = wordApp.Documents.Open(rightPath, ReadOnly: false, Visible: false);
+
+                        compareDoc = wordApp.CompareDocuments(
+                            OriginalDocument: leftDoc,
+                            RevisedDocument: rightDoc,
+                            Destination: WdCompareDestination.wdCompareDestinationNew,
+                            Granularity: WdGranularity.wdGranularityWordLevel,
+                            CompareFormatting: true,
+                            CompareCaseChanges: true,
+                            CompareWhitespace: true,
+                            CompareTables: true,
+                            CompareHeaders: true,
+                            CompareFootnotes: true,
+                            CompareTextboxes: true,
+                            CompareFields: true,
+                            CompareComments: true,
+                            CompareMoves: true,
+                            RevisedAuthor: revisedAuthor,
+                            IgnoreAllComparisonWarnings: false
+                        );
+
+                        compareDoc.Activate();
+                        compareDoc.Content.Copy();
+                        compareDoc.SaveAs2(rePath, WdSaveFormat.wdFormatXMLDocument);
+                        rightCell.Range.Paste();
+                    }
+                    finally
+                    {
+                        if (compareDoc != null)
+                        {
+                            compareDoc.Close(WdSaveOptions.wdDoNotSaveChanges);
+                            Marshal.ReleaseComObject(compareDoc);
+                        }
+
+                        if (leftDoc != null)
+                        {
+                            leftDoc.Close(WdSaveOptions.wdDoNotSaveChanges);
+                            Marshal.ReleaseComObject(leftDoc);
+                        }
+
+                        if (rightDoc != null)
+                        {
+                            rightDoc.Close(WdSaveOptions.wdDoNotSaveChanges);
+                            Marshal.ReleaseComObject(rightDoc);
+                        }
+
+                        TryDeleteFile(leftPath);
+                        TryDeleteFile(rightPath);
+                        TryDeleteFile(rePath);
+                    }
                 }
-                catch (IOException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("파일 삭제 실패: " + ex.Message);
-                }
+            }
+            finally
+            {
+                TryDeleteDirectory(tempDirectory);
             }
         }
 
@@ -111,6 +137,36 @@ namespace WordAddIn1
             tempDoc.SaveAs2(path, WdSaveFormat.wdFormatXMLDocument);
             tempDoc.Close(WdSaveOptions.wdSaveChanges);
             Marshal.ReleaseComObject(tempDoc);
+        }
+
+        private void TryDeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (IOException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("파일 삭제 실패: " + ex.Message);
+            }
+        }
+
+        private void TryDeleteDirectory(string path)
+        {
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path, true);
+                }
+            }
+            catch (IOException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("디렉터리 삭제 실패: " + ex.Message);
+            }
         }
     }
 }
