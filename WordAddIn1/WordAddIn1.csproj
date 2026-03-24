@@ -68,7 +68,6 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <SignManifests>false</SignManifests>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
@@ -197,11 +196,9 @@
     <Compile Include="PCTTransformer.cs" />
     <Compile Include="DrawingValidator.cs" />
     <Compile Include="DrawingReferenceRemover.cs" />
-    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="SubmissionPreparer.cs" />
     <Compile Include="TableComparer.cs" />
     <Compile Include="ImageInserter.cs" />
-    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -256,9 +253,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>DB82FB9891F5D682CF7D50C001380E90ED467770</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
