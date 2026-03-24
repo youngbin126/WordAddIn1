@@ -188,6 +188,7 @@
   <ItemGroup>
     <Compile Include="ClaimParaphraser.cs" />
     <Compile Include="ClaimTreeGenerator.cs" />
+    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="Formater.cs" />
     <Compile Include="DocumentComparer.cs" />
     <Compile Include="CommentRemover.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="SubmissionPreparer.cs" />
     <Compile Include="TableComparer.cs" />
     <Compile Include="ImageInserter.cs" />
+    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
