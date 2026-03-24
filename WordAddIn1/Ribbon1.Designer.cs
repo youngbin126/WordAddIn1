@@ -48,6 +48,7 @@
             this.group5 = this.Factory.CreateRibbonGroup();
             this.button3 = this.Factory.CreateRibbonButton();
             this.button9 = this.Factory.CreateRibbonButton();
+            this.button15 = this.Factory.CreateRibbonButton();
             this.group4 = this.Factory.CreateRibbonGroup();
             this.button8 = this.Factory.CreateRibbonButton();
             this.group6 = this.Factory.CreateRibbonGroup();
@@ -147,6 +148,7 @@
             // 
             this.group5.Items.Add(this.button3);
             this.group5.Items.Add(this.button9);
+            this.group5.Items.Add(this.button15);
             this.group5.Label = "변환 도구";
             this.group5.Name = "group5";
             // 
@@ -161,6 +163,12 @@
             this.button9.Label = "Paraphrsing";
             this.button9.Name = "button9";
             this.button9.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ClaimParaphraser_Click);
+            // 
+            // button15
+            // 
+            this.button15.Label = "수식 이미지 변환";
+            this.button15.Name = "button15";
+            this.button15.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.EquationToImage_Click);
             // 
             // group4
             // 
@@ -263,6 +271,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group7;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton button13;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton button14;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton button15;
     }
 
     partial class ThisRibbonCollection

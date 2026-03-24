@@ -266,6 +266,37 @@ private void AuthorChanger_Click(object sender, RibbonControlEventArgs e)
 
         }
 
+
+        private void EquationToImage_Click(object sender, RibbonControlEventArgs e)
+        {
+            var doc = Globals.ThisAddIn.Application.ActiveDocument;
+            if (doc == null)
+            {
+                MessageBox.Show("활성 문서를 찾을 수 없습니다.", "수식 이미지 변환", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (doc.ReadOnly)
+            {
+                MessageBox.Show("읽기 전용 문서는 변환할 수 없습니다.", "수식 이미지 변환", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                EquationImageConversionResult result = EquationImageTransformer.ConvertAllEquationsToImages(doc);
+                MessageBox.Show(
+                    $"수식 이미지 변환 완료: 성공 {result.SuccessCount}건, 실패 {result.FailureCount}건",
+                    "수식 이미지 변환",
+                    MessageBoxButtons.OK,
+                    result.FailureCount > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"수식 이미지 변환 중 오류가 발생했습니다: {ex.Message}", "수식 이미지 변환", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void button14_Click(object sender, RibbonControlEventArgs e)
         {
             Word.Application app = Globals.ThisAddIn.Application;

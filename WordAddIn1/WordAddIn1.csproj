@@ -188,6 +188,7 @@
   <ItemGroup>
     <Compile Include="ClaimParaphraser.cs" />
     <Compile Include="ClaimTreeGenerator.cs" />
+    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="Formater.cs" />
     <Compile Include="DocumentComparer.cs" />
     <Compile Include="CommentRemover.cs" />
