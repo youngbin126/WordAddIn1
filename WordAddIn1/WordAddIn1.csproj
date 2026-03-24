@@ -199,6 +199,7 @@
     <Compile Include="SubmissionPreparer.cs" />
     <Compile Include="TableComparer.cs" />
     <Compile Include="ImageInserter.cs" />
+    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
