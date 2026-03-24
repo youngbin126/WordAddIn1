@@ -257,6 +257,9 @@
   <PropertyGroup>
     <ManifestCertificateThumbprint>DB82FB9891F5D682CF7D50C001380E90ED467770</ManifestCertificateThumbprint>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- Include additional build rules for an Office application add-in. -->
