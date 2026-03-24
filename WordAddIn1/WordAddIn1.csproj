@@ -195,6 +195,7 @@
     <Compile Include="PCTTransformer.cs" />
     <Compile Include="DrawingValidator.cs" />
     <Compile Include="DrawingReferenceRemover.cs" />
+    <Compile Include="EquationImageTransformer.cs" />
     <Compile Include="SubmissionPreparer.cs" />
     <Compile Include="TableComparer.cs" />
     <Compile Include="ImageInserter.cs" />
